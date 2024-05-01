@@ -18,7 +18,28 @@ import java.util.List;
 public class MeetingController {
     private final MeetingService meetingService;
 
-    /*비정규화 json*/
+    /*비정규화 JSON*/
+    @GetMapping
+    public ResponseEntity<Slice<GetMeetingJsonResponseDto>> getMeetingListPostgre(
+            @RequestParam Double locationLat,
+            @RequestParam Double locationLng,
+            @RequestParam(required = false) List<String> skillId,
+            @RequestParam(required = false) List<String> careerId,
+            @RequestParam(defaultValue = "1") int page)
+    {
+
+        String skillIdsStr = (skillId == null || skillId.isEmpty()) ? null : String.join(",", skillId);
+        String careerIdsStr = (careerId == null || careerId.isEmpty()) ? null : String.join(",", careerId);
+
+        Slice<GetMeetingJsonResponseDto> responseDtoList = meetingService.getMeetingListPostgre(page
+                , locationLat
+                , locationLng
+                , skillIdsStr
+                , careerIdsStr
+        );
+
+        return ResponseEntity.ok().body(responseDtoList);
+    }
 
 
     /* 정규화 JOIN*/
