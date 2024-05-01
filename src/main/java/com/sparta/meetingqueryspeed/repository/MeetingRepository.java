@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
-    @Query(value = "SELECT m.*, " +
+    @Query(value = "SELECT DISTINCT m.*, " +
             "ST_Distance( CAST (ST_SetSRID(ST_MakePoint(:locationLng, :locationLat), 4326) AS geography), m.location_position) as dist " +
             "FROM meeting m " +
             "JOIN meeting_career mc ON mc.meeting_id = m.id " +
