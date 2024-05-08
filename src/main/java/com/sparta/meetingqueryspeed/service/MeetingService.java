@@ -1,11 +1,14 @@
 package com.sparta.meetingqueryspeed.service;
 
+import com.sparta.meetingqueryspeed.dto.GetMeetingArrayResponseDto;
 import com.sparta.meetingqueryspeed.dto.GetMeetingJoinResponseDto;
 import com.sparta.meetingqueryspeed.dto.GetMeetingJsonResponseDto;
 import com.sparta.meetingqueryspeed.entity.meeting.Meeting;
+import com.sparta.meetingqueryspeed.entity.meetingArray.MeetingArray;
 import com.sparta.meetingqueryspeed.entity.meetingJson.MeetingJson;
 import com.sparta.meetingqueryspeed.paginator.ListPaginator;
 import com.sparta.meetingqueryspeed.paginator.Paginator;
+import com.sparta.meetingqueryspeed.repository.MeetingArrayRepository;
 import com.sparta.meetingqueryspeed.repository.MeetingJsonRepository;
 import com.sparta.meetingqueryspeed.repository.MeetingRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +27,11 @@ import java.util.List;
 public class MeetingService {
     private final MeetingRepository meetingRepository;
     private final MeetingJsonRepository meetingJsonRepository;
-
+    private final MeetingArrayRepository meetingArrayRepository;
 
     private final Paginator<Meeting> meetingPaginator = new ListPaginator<>();
     private final Paginator<MeetingJson> meetingJsonPaginator = new ListPaginator<>();
+    private final Paginator<MeetingArray> meetingArrayPaginator = new ListPaginator<>();
 
 
     public Slice<GetMeetingJsonResponseDto> getMeetingListPostgre(
@@ -53,6 +57,34 @@ public class MeetingService {
         Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
         boolean hasNext = hasNextPage(meetingJsonList, pageSize, meetingJsonPaginator);
         List<GetMeetingJsonResponseDto> sliceList = meetingJsonList.stream().limit(pageSize).map(GetMeetingJsonResponseDto::fromEntity).toList();
+        return new SliceImpl<>(sliceList, pageable, hasNext);
+    }
+
+    /*비정규화 ARRAY*/
+    public Slice<GetMeetingArrayResponseDto> getMeetingListPostgreArray(
+            int page
+            , Double locationLat
+            , Double locationLng
+            , String skillIdsStr
+            , String careerIdsStr
+
+    ) {
+        int extraItem = 1; // pagination 을 위한 추가 요청
+        int pageSize = 10;
+        int offset = Math.max(page - 1, 0) * pageSize;
+
+        List<MeetingArray> meetingArrayList = meetingArrayRepository.findMeetingST_Dwithin_array(
+                locationLng
+                , locationLat
+                , skillIdsStr
+                , careerIdsStr
+                , pageSize + extraItem
+                , offset
+        );
+
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), pageSize);
+        boolean hasNext = hasNextPage(meetingArrayList, pageable.getPageSize(), meetingArrayPaginator);
+        List<GetMeetingArrayResponseDto> sliceList = meetingArrayList.stream().limit(pageSize).map(GetMeetingArrayResponseDto::fromEntity).toList();
         return new SliceImpl<>(sliceList, pageable, hasNext);
     }
 
@@ -87,6 +119,5 @@ public class MeetingService {
     private <T> boolean hasNextPage(List<T> meetingList, int pageSize, Paginator<T> paginator) {
         return paginator.hasNextPage(meetingList, pageSize);
     }
-
 
 }

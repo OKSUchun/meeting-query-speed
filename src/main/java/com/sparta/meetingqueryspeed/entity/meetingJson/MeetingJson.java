@@ -25,14 +25,14 @@ public class MeetingJson {
 
     @Type(JsonType.class)
     @Column(name = "skill_list",columnDefinition = "jsonb")
-    private List<SkillResponseDto> skillList;
+    private List<InnerSkill> skillList;
 
     @Type(JsonType.class)
     @Column(name = "career_list",columnDefinition = "jsonb")
-    private List<CareerResponseDto> careerList;
+    private List<InnerCareer> careerList;
 
     @Builder
-    public MeetingJson(Long id, String meetingName, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList) {
+    public MeetingJson(Long id, String meetingName, List<InnerSkill> skillList, List<InnerCareer> careerList) {
         this.id = id;
         this.meetingName = meetingName;
         this.skillList = skillList;

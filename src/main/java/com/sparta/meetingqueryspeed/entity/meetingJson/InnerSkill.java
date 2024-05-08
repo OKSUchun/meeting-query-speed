@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class SkillResponseDto {
+public class InnerSkill {
     private Long skillId;
     private String skillName;
 
     @Builder
-    public SkillResponseDto(Long skillId, String skillName) {
+    public InnerSkill(Long skillId, String skillName) {
         this.skillId = skillId;
         this.skillName = skillName;
     }

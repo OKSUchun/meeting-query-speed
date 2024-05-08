@@ -1,6 +1,8 @@
 package com.sparta.meetingqueryspeed.controller;
 
+import com.sparta.meetingqueryspeed.dto.GetMeetingArrayResponseDto;
 import com.sparta.meetingqueryspeed.dto.GetMeetingJoinResponseDto;
+import com.sparta.meetingqueryspeed.dto.GetMeetingJsonResponseDto;
 import com.sparta.meetingqueryspeed.service.MeetingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -41,6 +43,30 @@ public class MeetingController {
         return ResponseEntity.ok().body(responseDtoList);
     }
 
+    /* 비정규화 ARRAY 검색 JOIN */
+    @GetMapping("/array")
+    public ResponseEntity<Slice<GetMeetingArrayResponseDto>> getMeetingListPostgreArray(
+            @RequestParam Double locationLat,
+            @RequestParam Double locationLng,
+            @RequestParam(required = false) List<String> skillId,
+            @RequestParam(required = false) List<String> careerId,
+            @RequestParam(defaultValue = "1") int page)
+    {
+
+        String skillIdsStr = (skillId == null || skillId.isEmpty()) ? null : String.join(",", skillId);
+        String careerIdsStr = (careerId == null || careerId.isEmpty()) ? null : String.join(",", careerId);
+
+        Slice<GetMeetingArrayResponseDto> responseDtoList = meetingService.getMeetingListPostgreArray(
+                page
+                , locationLat
+                , locationLng
+                , skillIdsStr
+                , careerIdsStr
+        );
+
+        return ResponseEntity.ok().body(responseDtoList);
+    }
+
 
     /* 정규화 JOIN*/
     @GetMapping("/withJoin")
@@ -53,10 +79,10 @@ public class MeetingController {
     {
 
         if (skillId == null || skillId.isEmpty()) {
-            skillId = new ArrayList<Long>();
+            skillId = new ArrayList<>();
         }
         if (careerId == null || careerId.isEmpty()) {
-            careerId = new ArrayList<Long>();
+            careerId = new ArrayList<>();
         }
 
         Slice<GetMeetingJoinResponseDto> responseDtoList = meetingService.getMeetingListPostgreWithJoin(

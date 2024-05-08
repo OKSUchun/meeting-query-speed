@@ -1,8 +1,8 @@
 package com.sparta.meetingqueryspeed.dto;
 
-import com.sparta.meetingqueryspeed.entity.meetingJson.CareerResponseDto;
+import com.sparta.meetingqueryspeed.entity.meetingJson.InnerCareer;
 import com.sparta.meetingqueryspeed.entity.meetingJson.MeetingJson;
-import com.sparta.meetingqueryspeed.entity.meetingJson.SkillResponseDto;
+import com.sparta.meetingqueryspeed.entity.meetingJson.InnerSkill;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +15,10 @@ public class GetMeetingJsonResponseDto {
     private Long meetingId;
     private String meetingName;
 
-    private List<SkillResponseDto> skillList;
-    private List<CareerResponseDto> careerList;
+    private List<InnerSkill> skillList;
+    private List<InnerCareer> careerList;
     @Builder
-    GetMeetingJsonResponseDto(Long meetingId, String meetingName, List<SkillResponseDto> skillList, List<CareerResponseDto> careerList){
+    GetMeetingJsonResponseDto(Long meetingId, String meetingName, List<InnerSkill> skillList, List<InnerCareer> careerList){
         this.meetingId = meetingId;
         this.meetingName = meetingName;
         this.skillList = skillList;
